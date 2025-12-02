@@ -7,7 +7,7 @@ const Body = () => {
     <div className="min-h-screen flex flex-col">
       <NavBar />
 
-      <main className="flex-1">
+      <main className="flex-1 flex items-center justify-center bg-base-200">
         <Outlet />
       </main>
 
