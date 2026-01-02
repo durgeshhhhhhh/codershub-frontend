@@ -14,7 +14,9 @@
 - Install Axios
 - Cors - install cors in the backend => add middleware to with configurations: {origin, credentials: true}
 - whenever making API call so pass axios => {withCredentials: true}
-
+- Added redux store
+- Anyone should not be acces other routes without login
+- If token is not present, redirect user to login page
 
 body
 NavBar
