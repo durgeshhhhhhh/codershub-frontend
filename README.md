@@ -17,6 +17,7 @@
 - Added redux store
 - Anyone should not be acces other routes without login
 - If token is not present, redirect user to login page
+- Logout Feature 
 
 body
 NavBar
