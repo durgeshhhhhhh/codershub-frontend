@@ -64,11 +64,11 @@ const UserCard = ({ user }) => {
           )}
         </div>
 
-        <div className="flex justify-center gap-6 mt-6">
-          <button className="btn btn-circle btn-lg bg-white/10 backdrop-blur-sm border-2 border-red-400 hover:bg-red-500 hover:border-red-500 transition-all duration-300 group/btn">
+        <div className="flex justify-center items-center gap-6 mt-6">
+          <button className="btn btn-circle bg-gray-800/80 border-none hover:scale-110 transition-all duration-300 h-14 w-14">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-red-400 group-hover/btn:text-white transition-colors"
+              className="h-8 w-8 text-pink-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -76,16 +76,16 @@ const UserCard = ({ user }) => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={3}
                 d="M6 18L18 6M6 6l12 12"
               />
             </svg>
           </button>
 
-          <button className="btn btn-circle btn-lg bg-white/10 backdrop-blur-sm border-2 border-green-400 hover:bg-green-500 hover:border-green-500 transition-all duration-300 group/btn">
+          <button className="btn btn-circle bg-gray-800/80 border-none hover:scale-110 transition-all duration-300 h-14 w-14">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-green-400 group-hover/btn:text-white transition-colors"
+              className="h-8 w-8 text-green-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -93,7 +93,7 @@ const UserCard = ({ user }) => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={2.5}
                 d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
               />
             </svg>
