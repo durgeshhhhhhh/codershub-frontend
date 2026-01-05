@@ -55,7 +55,6 @@ const Connections = () => {
 
   return (
     <div className="py-8 px-4 max-w-4xl mx-auto">
-      {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
           <svg
@@ -81,7 +80,6 @@ const Connections = () => {
         </div>
       </div>
 
-      {/* Connection Cards */}
       <div className="grid gap-4">
         {connections.map((connection, index) => {
           const { _id, firstName, lastName, photoUrl, about, age, gender, skills } =
@@ -91,7 +89,6 @@ const Connections = () => {
               key={_id || index}
               className="card card-side bg-base-100 shadow-lg border border-base-300 hover:shadow-xl transition-all duration-300"
             >
-              {/* Avatar */}
               <figure className="pl-6 py-6">
                 <div className="avatar">
                   <div className="w-24 h-24 rounded-xl ring ring-primary/20 ring-offset-base-100 ring-offset-2">
@@ -104,7 +101,6 @@ const Connections = () => {
                 </div>
               </figure>
 
-              {/* Content */}
               <div className="card-body py-6">
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="card-title text-lg">
