@@ -46,12 +46,10 @@ const EditProfile = ({ user }) => {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
-      const rawMessage =
-        error?.response?.data || "Something went wrong. Please try again.";
-      const cleanMessage = rawMessage.startsWith?.("Error: ")
-        ? rawMessage.slice(7)
-        : rawMessage;
-      setError(cleanMessage);
+      setError(
+        error?.response?.data || "Something went wrong. Please try again."
+      );
+      setTimeout(() => setError(""), 5000);
     }
   };
 

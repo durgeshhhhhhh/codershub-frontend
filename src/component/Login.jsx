@@ -9,6 +9,7 @@ const Login = () => {
   const [emailId, setEmailId] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [shake, setShake] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -29,13 +30,28 @@ const Login = () => {
       dispatch(addUser(res.data));
       navigate("/");
     } catch (error) {
+      setEmailId("");
+      setPassword("");
       setError(error?.response?.data || "Invalid credentials.");
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      setTimeout(() => setError(""), 5000);
     }
   };
 
   return (
     <div className="flex items-center justify-center py-10 px-4">
-      <div className="card bg-base-100 w-full max-w-md shadow-2xl backdrop-blur-sm border border-base-300">
+      <div className={`card bg-base-100 w-full max-w-md shadow-2xl backdrop-blur-sm border border-base-300 ${shake ? "animate-shake" : ""}`}>
+        <style>{`
+          @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-8px); }
+            20%, 40%, 60%, 80% { transform: translateX(8px); }
+          }
+          .animate-shake {
+            animation: shake 0.5s ease-in-out;
+          }
+        `}</style>
         <div className="card-body gap-6">
           <div className="flex flex-col items-center gap-2 mb-2">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
