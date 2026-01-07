@@ -10,12 +10,57 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
+  const [isLoginForm, setIsLoginForm] = useState(true);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const toggleForm = () => {
+    setIsLoginForm((value) => !value);
+    setEmailId("");
+    setPassword("");
+    setFirstName("");
+    setLastName("");
+    setError("");
+    setShowPassword(false);
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+    try {
+      const res = await axios.post(
+        BASE_URL + "/signup",
+        {
+          firstName,
+          lastName,
+          email: emailId,
+          password,
+        },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res?.data?.data));
+      return navigate("/profile");
+    } catch (error) {
+      setError(
+        error?.response?.data || "Something went wrong. Please try again."
+      );
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      setTimeout(() => setError(""), 3000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
     try {
       const res = await axios.post(
         BASE_URL + "/login",
@@ -23,12 +68,10 @@ const Login = () => {
           email: emailId,
           password: password,
         },
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
       dispatch(addUser(res.data));
-      navigate("/");
+      return navigate("/");
     } catch (error) {
       setEmailId("");
       setPassword("");
@@ -36,12 +79,18 @@ const Login = () => {
       setShake(true);
       setTimeout(() => setShake(false), 500);
       setTimeout(() => setError(""), 5000);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="flex items-center justify-center py-10 px-4">
-      <div className={`card bg-base-100 w-full max-w-md shadow-2xl backdrop-blur-sm border border-base-300 ${shake ? "animate-shake" : ""}`}>
+      <div
+        className={`card bg-base-100 w-full max-w-md shadow-2xl backdrop-blur-sm border border-base-300 ${
+          shake ? "animate-shake" : ""
+        }`}
+      >
         <style>{`
           @keyframes shake {
             0%, 100% { transform: translateX(0); }
@@ -55,27 +104,46 @@ const Login = () => {
         <div className="card-body gap-6">
           <div className="flex flex-col items-center gap-2 mb-2">
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg">
-              <svg
-                className="w-8 h-8 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
+              {isLoginForm ? (
+                <svg
+                  className="w-8 h-8 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                  <polyline points="10 17 15 12 10 7" />
+                  <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+              ) : (
+                <svg
+                  className="w-8 h-8 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <line x1="19" y1="8" x2="19" y2="14" />
+                  <line x1="22" y1="11" x2="16" y2="11" />
+                </svg>
+              )}
             </div>
             <h2 className="text-2xl font-bold text-base-content">
-              Welcome Back!
+              {isLoginForm ? "Welcome Back!" : "Join CodersHub"}
             </h2>
             <p className="text-base-content/60 text-sm">
-              Sign in to continue to CodersHub
+              {isLoginForm
+                ? "Sign in to continue to CodersHub"
+                : "Create an account to connect with developers"}
             </p>
           </div>
 
@@ -121,7 +189,65 @@ const Login = () => {
             </div>
           )}
 
-          <form className="flex flex-col gap-4" onSubmit={handleLogin}>
+          <form
+            className="flex flex-col gap-4"
+            onSubmit={isLoginForm ? handleLogin : handleSignUp}
+          >
+            {!isLoginForm && (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="form-control">
+                  <label className="input input-bordered flex items-center gap-3 focus-within:input-primary transition-all duration-200">
+                    <svg
+                      className="h-5 w-5 opacity-50"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <input
+                      type="text"
+                      value={firstName}
+                      className="grow"
+                      placeholder="First name"
+                      required
+                      onChange={(e) => setFirstName(e.target.value)}
+                    />
+                  </label>
+                </div>
+
+                <div className="form-control">
+                  <label className="input input-bordered flex items-center gap-3 focus-within:input-primary transition-all duration-200">
+                    <svg
+                      className="h-5 w-5 opacity-50"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <input
+                      type="text"
+                      value={lastName}
+                      className="grow"
+                      placeholder="Last name (optional)"
+                      onChange={(e) => setLastName(e.target.value)}
+                    />
+                  </label>
+                </div>
+              </div>
+            )}
+
             <div className="form-control">
               <label className="input input-bordered flex items-center gap-3 focus-within:input-primary transition-all duration-200">
                 <svg
@@ -175,7 +301,7 @@ const Login = () => {
                   </g>
                 </svg>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   className="grow"
                   required
@@ -185,6 +311,49 @@ const Login = () => {
                   title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-xs btn-circle"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 opacity-50"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 opacity-50"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                  )}
+                </button>
               </label>
             </div>
 
@@ -196,30 +365,57 @@ const Login = () => {
                 />
                 <span className="text-base-content/70">Remember me</span>
               </label>
-              <a href="#" className="link link-primary link-hover font-medium">
-                Forgot password?
-              </a>
+              {isLoginForm && (
+                <a
+                  href="#"
+                  className="link link-primary link-hover font-medium"
+                >
+                  Forgot password?
+                </a>
+              )}
             </div>
 
             <button
               type="submit"
+              disabled={isLoading}
               className="btn btn-primary w-full mt-2 text-base font-semibold shadow-lg hover:shadow-primary/25 hover:scale-[1.02] transition-all duration-200"
             >
-              <svg
-                className="w-5 h-5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                <polyline points="10 17 15 12 10 7" />
-                <line x1="15" y1="12" x2="3" y2="12" />
-              </svg>
-              Sign In
+              {isLoading ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  {isLoginForm ? (
+                    <>
+                      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                      <polyline points="10 17 15 12 10 7" />
+                      <line x1="15" y1="12" x2="3" y2="12" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <line x1="19" y1="8" x2="19" y2="14" />
+                      <line x1="22" y1="11" x2="16" y2="11" />
+                    </>
+                  )}
+                </svg>
+              )}
+              {isLoading
+                ? isLoginForm
+                  ? "Signing In..."
+                  : "Creating Account..."
+                : isLoginForm
+                ? "Sign In"
+                : "Sign Up"}
             </button>
           </form>
 
@@ -267,10 +463,16 @@ const Login = () => {
           </div>
 
           <p className="text-center text-sm text-base-content/60 mt-2">
-            Don't have an account?{" "}
-            <a href="#" className="link link-primary link-hover font-semibold">
-              Create one now
-            </a>
+            {isLoginForm
+              ? "Don't have an account? "
+              : "Already have an account? "}
+            <button
+              type="button"
+              className="link link-primary link-hover font-semibold"
+              onClick={toggleForm}
+            >
+              {isLoginForm ? "Create one now" : "Sign In"}
+            </button>
           </p>
         </div>
       </div>
