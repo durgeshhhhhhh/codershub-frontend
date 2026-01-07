@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { BASE_URL } from "../utils/constant";
 import axios from "axios";
 import { removeUser } from "../utils/userSlice";
+import logo from "../assets/logo.svg";
 
 const NavBar = () => {
   const user = useSelector((store) => store.user);
@@ -22,7 +23,8 @@ const NavBar = () => {
   return (
     <div className="navbar bg-neutral shadow-sm">
       <div className="flex-1">
-        <Link to="/" className="btn btn-ghost text-xl">
+        <Link to="/" className="btn btn-ghost text-xl gap-2">
+          <img src={logo} alt="CodersHub Logo" className="w-8 h-8" />
           CodersHub
         </Link>
       </div>

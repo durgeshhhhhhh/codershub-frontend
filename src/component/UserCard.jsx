@@ -1,5 +1,26 @@
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { BASE_URL } from "../utils/constant";
+import { removeUserFromFeed } from "../utils/feedSlice";
+
 const UserCard = ({ user }) => {
-  const { firstName, lastName, photoUrl, age, gender, skills, about } = user;
+  const { _id, firstName, lastName, photoUrl, age, gender, skills, about } =
+    user;
+  const dispatch = useDispatch();
+
+  const handleSendRequest = async (status, userId) => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/request/send/" + status + "/" + userId,
+        {},
+        { withCredentials: true }
+      );
+      dispatch(removeUserFromFeed(userId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="card w-96 h-[550px] bg-base-100 shadow-2xl rounded-3xl overflow-hidden relative group">
       <figure className="absolute inset-0">
@@ -65,7 +86,12 @@ const UserCard = ({ user }) => {
         </div>
 
         <div className="flex justify-center items-center gap-6 mt-6">
-          <button className="btn btn-circle bg-gray-800/80 border-none hover:scale-110 transition-all duration-300 h-14 w-14">
+          <button
+            className="btn btn-circle bg-gray-800/80 border-none hover:scale-110 transition-all duration-300 h-14 w-14"
+            onClick={() => {
+              handleSendRequest("ignored", _id);
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-8 w-8 text-pink-500"
@@ -82,7 +108,12 @@ const UserCard = ({ user }) => {
             </svg>
           </button>
 
-          <button className="btn btn-circle bg-gray-800/80 border-none hover:scale-110 transition-all duration-300 h-14 w-14">
+          <button
+            className="btn btn-circle bg-gray-800/80 border-none hover:scale-110 transition-all duration-300 h-14 w-14"
+            onClick={() => {
+              handleSendRequest("interested", _id);
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-8 w-8 text-green-400"
