@@ -28,7 +28,19 @@ const NavBar = () => {
           CodersHub
         </Link>
       </div>
-      {user && <p>welcome, {user.firstName}</p>}
+      {user && (
+        <div className="hidden md:flex items-center px-5 py-2.5 rounded-full bg-neutral/80 backdrop-blur-md shadow-md hover:shadow-lg hover:bg-neutral/90 transition-all duration-300">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-xs text-base-content/50 font-medium leading-none tracking-wide">
+              Hello
+            </span>
+            <span className="text-sm font-bold bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent leading-tight">
+              {user.firstName}
+              {user.lastName && ` ${user.lastName}`}
+            </span>
+          </div>
+        </div>
+      )}
       {user && (
         <div className="flex gap-2">
           <div className="dropdown dropdown-end mx-2">
@@ -37,7 +49,7 @@ const NavBar = () => {
               role="button"
               className="btn btn-ghost btn-circle avatar"
             >
-              <div className="w-10 rounded-full">
+              <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                 <img alt="User Photo" src={user.photoUrl} />
               </div>
             </div>

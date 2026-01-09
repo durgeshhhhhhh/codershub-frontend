@@ -182,17 +182,19 @@ const Requests = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {requests.map((request, index) => {
-          const {
-            _id,
-            firstName,
-            lastName,
-            photoUrl,
-            about,
-            age,
-            gender,
-            skills,
-          } = request.fromUserId;
+        {requests
+          .filter((request) => request.fromUserId !== null)
+          .map((request, index) => {
+            const {
+              _id,
+              firstName,
+              lastName,
+              photoUrl,
+              about,
+              age,
+              gender,
+              skills,
+            } = request.fromUserId;
 
           const isAnimating = animatingCard?.id === request._id;
           const animationClass = isAnimating

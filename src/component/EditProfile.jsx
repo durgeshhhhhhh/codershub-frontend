@@ -42,7 +42,9 @@ const EditProfile = ({ user }) => {
         { firstName, lastName, age, gender, photoUrl, about, skills },
         { withCredentials: true }
       );
-      dispatch(addUser(res?.data?.data));
+      // console.log(res?.data);
+      // console.log(res?.data?.data);
+      dispatch(addUser(res?.data));
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (error) {
