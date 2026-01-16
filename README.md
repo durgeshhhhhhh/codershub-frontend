@@ -1,27 +1,51 @@
-# CodersHub
+# deployment
 
-- Created a Vite + React application
-- Remove unecessary code and create a Hello World app
-- Install Tailwind CSS
-- Install daisyUI
-- Add NavBar component to App.jsx
-- Create a NavBar.jsx seperate Component file inside Component folder
-- Install react-router
-- Create BrowserRouter > Routes > Route=/ body > RouteChildren
-- Create an Outlet in Body Component
-- Create a footer
-- Create a login page
-- Install Axios
-- Cors - install cors in the backend => add middleware to with configurations: {origin, credentials: true}
-- whenever making API call so pass axios => {withCredentials: true}
-- Added redux store
-- Anyone should not be acces other routes without login
-- If token is not present, redirect user to login page
-- Logout Feature 
+- Signup on AWS
+- Launch instance
+- chmod 400 <secret>.pem
+- ssh -i "codersHub-secret.pem" ubuntu@ec2-16-16-76-83.eu-north-1.compute.amazonaws.com
+- Install Node Version v24.12.0
+- git clone projects
 
-body
-NavBar
-Route=/ => Feed
-Route=/login => Login
-Route=/profile => profile
-Route=/Connections => Connections
+- Frontend
+        - npm install --> to isntall dependencies
+        - npm run build
+        - sudo apt update
+        - sudo apt install nginx
+        - sudo systemctl start nginx
+        - sudo systemctl enable nginx
+        - copy code from dist(build files) to /var/www/html/
+        - sudo scp -r dist/* /var/www/html
+        - Enable port :80 of your instance
+
+- Backend
+        - Allowed ec2 instance public IP on mongodb server
+        - npm install pm-2 -g
+        - pm2 start npm --name "codershub-backend" -- start
+        - pm2 logs
+        - pm2 list, pm2 flush  <name>, pm2 stop <name>, pm2 delete <name>
+        - config nginx - /etc/nginx/sites-available/default
+        - restart nginx - sudo systemctl restart nginx
+        - Modify the BASEURL in frontned project to "/api"
+
+
+    Frontend = http://16.16.76.83/
+    Backend = http://16.16.76.83:3000/
+
+    Domain name = codershub.com
+
+    Frontend = codershub.com
+    Backend = codershub.com:3000/ => codershub.com/api (proxy pass)
+
+    nginx config:
+
+    server_name 16.16.76.83;
+
+    location /api/ {
+                 proxy_pass http://localhost:3000/;
+                 proxy_http_version 1.1;
+                 proxy_set_header Upgrade $http_upgrade;
+                 proxy_set_header Connection 'upgrade';
+                 proxy_set_header Host $host;
+                 proxy_cache_bypass $http_upgrade;
+            }
