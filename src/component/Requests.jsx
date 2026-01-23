@@ -47,7 +47,6 @@ const Requests = () => {
       const res = await axios.get(BASE_URL + "/user/requests/recieved", {
         withCredentials: true,
       });
-      console.log(res?.data?.data);
       dispatch(addRequests(res?.data?.data));
     } catch (error) {
       console.log(error);
@@ -196,138 +195,138 @@ const Requests = () => {
               skills,
             } = request.fromUserId;
 
-          const isAnimating = animatingCard?.id === request._id;
-          const animationClass = isAnimating
-            ? animatingCard.type === "accepted"
-              ? "animate-swipe-right"
-              : "animate-swipe-left"
-            : "";
+            const isAnimating = animatingCard?.id === request._id;
+            const animationClass = isAnimating
+              ? animatingCard.type === "accepted"
+                ? "animate-swipe-right"
+                : "animate-swipe-left"
+              : "";
 
-          return (
-            <div
-              key={request._id || index}
-              className={`group relative bg-base-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-base-300 hover:border-primary/50 ${animationClass} ${
-                isAnimating && animatingCard.type === "accepted"
-                  ? "ring-4 ring-success/50"
-                  : isAnimating && animatingCard.type === "rejected"
-                  ? "ring-4 ring-error/50"
-                  : ""
-              }`}
-            >
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-primary"></div>
+            return (
+              <div
+                key={request._id || index}
+                className={`group relative bg-base-100 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-base-300 hover:border-primary/50 ${animationClass} ${
+                  isAnimating && animatingCard.type === "accepted"
+                    ? "ring-4 ring-success/50"
+                    : isAnimating && animatingCard.type === "rejected"
+                    ? "ring-4 ring-error/50"
+                    : ""
+                }`}
+              >
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-primary"></div>
 
-              <div className="p-6">
-                <div className="flex flex-col items-center text-center mb-4">
-                  <div className="relative mb-4">
-                    <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-base-200 group-hover:ring-primary/30 transition-all duration-300">
-                      <img
-                        src={photoUrl || "https://via.placeholder.com/96"}
-                        alt={firstName}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
+                <div className="p-6">
+                  <div className="flex flex-col items-center text-center mb-4">
+                    <div className="relative mb-4">
+                      <div className="w-20 h-20 rounded-full overflow-hidden ring-4 ring-base-200 group-hover:ring-primary/30 transition-all duration-300">
+                        <img
+                          src={photoUrl || "https://via.placeholder.com/96"}
+                          alt={firstName}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        />
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-success rounded-full flex items-center justify-center ring-2 ring-base-100">
+                        <span className="text-white text-xs">✓</span>
+                      </div>
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-success rounded-full flex items-center justify-center ring-2 ring-base-100">
-                      <span className="text-white text-xs">✓</span>
+
+                    <h3 className="text-lg font-bold text-base-content">
+                      {firstName} {lastName}
+                    </h3>
+
+                    <div className="flex items-center gap-2 mt-1">
+                      {age && (
+                        <span className="text-xs text-base-content/50">
+                          {age} years
+                        </span>
+                      )}
+                      {age && gender && (
+                        <span className="text-base-content/30">•</span>
+                      )}
+                      {gender && (
+                        <span className="text-xs text-base-content/50 capitalize">
+                          {gender}
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  <h3 className="text-lg font-bold text-base-content">
-                    {firstName} {lastName}
-                  </h3>
+                  {about && (
+                    <p className="text-sm text-base-content/60 text-center line-clamp-2 mb-4">
+                      {about}
+                    </p>
+                  )}
 
-                  <div className="flex items-center gap-2 mt-1">
-                    {age && (
-                      <span className="text-xs text-base-content/50">
-                        {age} years
-                      </span>
-                    )}
-                    {age && gender && (
-                      <span className="text-base-content/30">•</span>
-                    )}
-                    {gender && (
-                      <span className="text-xs text-base-content/50 capitalize">
-                        {gender}
-                      </span>
-                    )}
-                  </div>
-                </div>
+                  {skills && skills.length > 0 && (
+                    <div className="flex flex-wrap justify-center gap-1.5 mb-5">
+                      {skills.slice(0, 3).map((skill, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                      {skills.length > 3 && (
+                        <span className="px-2 py-1 text-xs rounded-full bg-base-200 text-base-content/60">
+                          +{skills.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  )}
 
-                {about && (
-                  <p className="text-sm text-base-content/60 text-center line-clamp-2 mb-4">
-                    {about}
-                  </p>
-                )}
-
-                {skills && skills.length > 0 && (
-                  <div className="flex flex-wrap justify-center gap-1.5 mb-5">
-                    {skills.slice(0, 3).map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary font-medium"
+                  <div className="flex gap-3">
+                    <button
+                      className="flex-1 btn btn-sm btn-primary gap-1"
+                      onClick={() =>
+                        reviewRequest("accepted", request._id, firstName)
+                      }
+                      disabled={animatingCard !== null}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
                       >
-                        {skill}
-                      </span>
-                    ))}
-                    {skills.length > 3 && (
-                      <span className="px-2 py-1 text-xs rounded-full bg-base-200 text-base-content/60">
-                        +{skills.length - 3}
-                      </span>
-                    )}
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Accept
+                    </button>
+                    <button
+                      className="flex-1 btn btn-sm bg-base-200 hover:bg-error hover:text-white border-0 gap-1 transition-all duration-300"
+                      onClick={() =>
+                        reviewRequest("rejected", request._id, firstName)
+                      }
+                      disabled={animatingCard !== null}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                      Ignore
+                    </button>
                   </div>
-                )}
-
-                <div className="flex gap-3">
-                  <button
-                    className="flex-1 btn btn-sm btn-primary gap-1"
-                    onClick={() =>
-                      reviewRequest("accepted", request._id, firstName)
-                    }
-                    disabled={animatingCard !== null}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Accept
-                  </button>
-                  <button
-                    className="flex-1 btn btn-sm bg-base-200 hover:bg-error hover:text-white border-0 gap-1 transition-all duration-300"
-                    onClick={() =>
-                      reviewRequest("rejected", request._id, firstName)
-                    }
-                    disabled={animatingCard !== null}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                    Ignore
-                  </button>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
     </div>
   );
