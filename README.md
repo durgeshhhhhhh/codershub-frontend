@@ -49,3 +49,23 @@
                  proxy_set_header Host $host;
                  proxy_cache_bypass $http_upgrade;
             }
+
+
+# Adding a custom Domain name
+
+        - purchased domain name from godaddy
+        - signup on cludflare & add a new domain name
+        - change the nameservers on godaddy and point it to cloudflare
+        - wait for sometimes till your nameservers are updated
+        - DNS record: A joincodershub.com 
+        - Enable SSL for website [Full (strict)]
+
+
+# Sending Emails via SES
+
+        - Create a IAM user
+        - Give Access to AmazonSESFullAccess
+        - Amazon SES: Create an Identity
+        - Verify Your domain name
+        - Verify an email address 
+ 
