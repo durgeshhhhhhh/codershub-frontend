@@ -8,7 +8,7 @@ const Requests = () => {
   const dispatch = useDispatch();
   const requests = useSelector((store) => store.request);
   const [animatingCard, setAnimatingCard] = useState(null);
-  const [toast, setToast] = useState(null); //
+  const [toast, setToast] = useState(null);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
