@@ -7,7 +7,7 @@ import appStore from "./utils/appStore";
 import Feed from "./component/Feed";
 import Connections from "./component/Connections";
 import Requests from "./component/Requests";
-import Premium from "./component/premium";
+import Premium from "./component/Premium";
 
 function App() {
   return (
