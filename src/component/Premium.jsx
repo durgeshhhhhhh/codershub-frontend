@@ -1,6 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constant";
-// import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 const plans = [
   // {
@@ -51,7 +52,28 @@ const plans = [
 ];
 
 const Premium = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [isUserPremium, setIsUserPremium] = useState(false);
+
+  useEffect(() => {
+    verifyPremiumUser();
+  }, []);
+
+  const verifyPremiumUser = async () => {
+    try {
+      const res = await axios.get(BASE_URL + "/payment/verify", {
+        withCredentials: true,
+      });
+
+      console.log(res?.data);
+
+      if (res.data.isPremium) {
+        setIsUserPremium(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handlePlanUpgrade = async (planName) => {
     // if (planName === "Standard") {
@@ -85,6 +107,7 @@ const Premium = () => {
         theme: {
           color: "#667eea",
         },
+        handler: verifyPremiumUser,
       };
 
       const rzp = new Razorpay(options);
@@ -93,7 +116,26 @@ const Premium = () => {
       console.log(error);
     }
   };
-  return (
+  return isUserPremium ? (
+    <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-100 to-base-200 px-6 py-12">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center space-y-3">
+          <div className="badge badge-outline badge-primary px-4 py-3 text-xs font-semibold tracking-wide">
+            CodersHub Premium
+          </div>
+          <h1 className="text-3xl md:text-4xl font-bold">
+            You are already a premium user
+          </h1>
+          <p className="text-base-content/70">
+            Thank you for being a part of CodersHub.
+          </p>
+          <button className="btn btn-primary" onClick={() => navigate("/")}>
+            Go to Home
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : (
     <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-100 to-base-200 px-6 py-12">
       <div className="mx-auto max-w-6xl">
         <div className="text-center space-y-3">
