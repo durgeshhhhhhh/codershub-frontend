@@ -1,9 +1,9 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constant";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 import PremiumShimmer from "./ShimmerUi/PremiumShimmer";
 
+// Plan hierarchy: higher index = higher tier
 const plans = [
   {
     name: "Silver",
@@ -21,7 +21,8 @@ const plans = [
     borderGlow: "hover:shadow-blue-500/20",
     tickColor: "text-blue-500",
     buttonStyle: "btn-primary",
-    spotlight: true,
+    currentBadgeStyle: "badge-info",
+    tier: 1,
   },
   {
     name: "Gold",
@@ -39,14 +40,22 @@ const plans = [
     borderGlow: "hover:shadow-amber-500/20",
     tickColor: "text-amber-500",
     buttonStyle: "btn-warning",
-    spotlight: false,
+    currentBadgeStyle: "badge-warning",
+    tier: 2,
   },
 ];
 
+const getTierByName = (name) => {
+  const plan = plans.find((p) => p.name === name);
+  return plan ? plan.tier : 0;
+};
+
 const Premium = () => {
-  const navigate = useNavigate();
-  const [isUserPremium, setIsUserPremium] = useState(false);
+  const [membershipType, setMembershipType] = useState(null);
   const [isVerifying, setIsVerifying] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const currentTier = getTierByName(membershipType);
 
   useEffect(() => {
     verifyPremiumUser();
@@ -58,8 +67,8 @@ const Premium = () => {
         withCredentials: true,
       });
 
-      if (res.data.isPremium) {
-        setIsUserPremium(true);
+      if (res.data.isPremium && res.data.membershipType) {
+        setMembershipType(res.data.membershipType);
       }
     } catch (error) {
       console.log(error);
@@ -86,7 +95,7 @@ const Premium = () => {
         amount,
         currency,
         name: "CodersHub",
-        description: "Upgrade to premium",
+        description: `Upgrade to ${planName}`,
         order_id: orderId,
         prefill: {
           name: notes.firstName + " " + notes.lastName,
@@ -105,49 +114,29 @@ const Premium = () => {
       console.log(error);
     }
   };
-  const [loading, setLoading] = useState(false);
 
   if (isVerifying) {
     return <PremiumShimmer />;
   }
 
-  return isUserPremium ? (
-    <div className="min-h-screen bg-gradient-to-br from-base-100 via-primary/5 to-secondary/10 px-6 py-16 flex items-center justify-center">
-      <div className="text-center space-y-6 max-w-lg">
-        <div className="relative inline-block">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto shadow-lg shadow-primary/30 animate-pulse">
-            <span className="text-4xl">👑</span>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <span className="badge badge-primary badge-lg px-4 py-3 font-semibold">
-            Premium Member
-          </span>
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            You're All Set!
-          </h1>
-          <p className="text-base-content/70 text-lg">
-            Enjoy unlimited access to all premium features. Thank you for being
-            part of CodersHub!
-          </p>
-        </div>
-        <div className="flex gap-3 justify-center pt-4">
-          <button
-            className="btn btn-primary btn-lg gap-2"
-            onClick={() => navigate("/")}
-          >
-            <span>🏠</span> Go to Feed
-          </button>
-          <button
-            className="btn btn-outline btn-lg gap-2"
-            onClick={() => navigate("/connections")}
-          >
-            <span>🤝</span> My Connections
-          </button>
-        </div>
-      </div>
-    </div>
-  ) : (
+  const getButtonState = (plan) => {
+    const isCurrentPlan = membershipType === plan.name;
+    const isLowerTier = plan.tier < currentTier;
+    const isHigherTier = plan.tier > currentTier;
+
+    if (isCurrentPlan) {
+      return { text: "Current Plan", disabled: true, style: "btn-disabled bg-base-300" };
+    }
+    if (isLowerTier) {
+      return { text: "Included in your plan", disabled: true, style: "btn-disabled btn-ghost" };
+    }
+    if (isHigherTier && membershipType) {
+      return { text: `Upgrade to ${plan.name}`, disabled: false, style: plan.buttonStyle };
+    }
+    return { text: `Get ${plan.name}`, disabled: false, style: plan.buttonStyle };
+  };
+
+  return (
     <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-100 to-base-200 px-4 sm:px-6 py-12">
       <div className="mx-auto max-w-5xl">
         {/* Header */}
@@ -158,92 +147,123 @@ const Premium = () => {
             <span className="animate-pulse">✨</span>
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-            Supercharge Your{" "}
-            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Developer Network
-            </span>
+            {membershipType ? (
+              <>
+                Manage Your{" "}
+                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  Subscription
+                </span>
+              </>
+            ) : (
+              <>
+                Supercharge Your{" "}
+                <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  Developer Network
+                </span>
+              </>
+            )}
           </h1>
           <p className="text-base-content/60 text-lg max-w-2xl mx-auto">
-            Connect faster, get noticed, and build meaningful collaborations
-            with fellow developers.
+            {membershipType
+              ? `You're currently on the ${membershipType} plan. Upgrade anytime to unlock more features.`
+              : "Connect faster, get noticed, and build meaningful collaborations with fellow developers."}
           </p>
         </div>
 
         {/* Plans Grid */}
         <div className="grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
-          {plans.map((plan) => (
-            <div
-              key={plan.name}
-              className={`relative group card bg-gradient-to-br ${plan.gradient} bg-base-100 border border-base-200 shadow-xl ${plan.borderGlow} hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden`}
-            >
-              {/* Spotlight badge */}
-              {plan.spotlight && (
-                <div className="absolute -top-1 -right-1">
-                  <div className="bg-primary text-primary-content text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg shadow-lg">
-                    RECOMMENDED
-                  </div>
-                </div>
-              )}
+          {plans.map((plan) => {
+            const isCurrentPlan = membershipType === plan.name;
+            const buttonState = getButtonState(plan);
 
-              <div className="card-body p-6 sm:p-8 space-y-6">
-                {/* Plan header */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-2xl sm:text-3xl font-bold">
-                      {plan.name}
-                    </h2>
-                    <span className={`text-2xl ${plan.tickColor}`}>✓</span>
+            return (
+              <div
+                key={plan.name}
+                className={`relative group card bg-gradient-to-br ${plan.gradient} bg-base-100 border-2 shadow-xl ${plan.borderGlow} hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden ${
+                  isCurrentPlan
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-base-200"
+                }`}
+              >
+                {/* Current plan badge */}
+                {isCurrentPlan && (
+                  <div className="absolute -top-1 -right-1">
+                    <div className={`${plan.currentBadgeStyle} badge text-xs font-bold px-3 py-3 rounded-bl-lg rounded-tr-lg shadow-lg`}>
+                      CURRENT PLAN
+                    </div>
                   </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-4xl sm:text-5xl font-bold">
-                      {plan.price}
-                    </span>
-                    <span className="text-base-content/50 text-lg">
-                      {plan.period}
-                    </span>
-                  </div>
-                  <p className="text-base-content/60">{plan.description}</p>
-                </div>
+                )}
 
-                {/* Divider */}
-                <div className="divider my-2"></div>
-
-                {/* Features */}
-                <ul className="space-y-4">
-                  {plan.highlights.map((item) => (
-                    <li key={item.text} className="flex items-center gap-3">
-                      <span className="text-xl w-8 h-8 flex items-center justify-center bg-base-200 rounded-lg">
-                        {item.icon}
+                <div className="card-body p-6 sm:p-8 space-y-6">
+                  {/* Plan header */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-2xl sm:text-3xl font-bold">
+                        {plan.name}
+                      </h2>
+                      <span className={`text-2xl ${plan.tickColor}`}>✓</span>
+                      {isCurrentPlan && (
+                        <span className="text-xs bg-success/20 text-success px-2 py-1 rounded-full font-medium">
+                          Active
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-4xl sm:text-5xl font-bold">
+                        {plan.price}
                       </span>
-                      <span className="text-base-content/80">{item.text}</span>
-                    </li>
-                  ))}
-                </ul>
+                      <span className="text-base-content/50 text-lg">
+                        {plan.period}
+                      </span>
+                    </div>
+                    <p className="text-base-content/60">{plan.description}</p>
+                  </div>
 
-                {/* CTA Button */}
-                <div className="pt-4">
-                  <button
-                    className={`btn ${plan.buttonStyle} btn-lg w-full gap-2 group-hover:scale-[1.02] transition-transform`}
-                    onClick={() => {
-                      setLoading(true);
-                      handlePlanUpgrade(plan.name).finally(() =>
-                        setLoading(false)
-                      );
-                    }}
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <span className="loading loading-spinner"></span>
-                    ) : (
-                      <>
-                        <span>🚀</span> Upgrade to {plan.name}
-                      </>
-                    )}
-                  </button>
+                  {/* Divider */}
+                  <div className="divider my-2"></div>
+
+                  {/* Features */}
+                  <ul className="space-y-4">
+                    {plan.highlights.map((item) => (
+                      <li key={item.text} className="flex items-center gap-3">
+                        <span className="text-xl w-8 h-8 flex items-center justify-center bg-base-200 rounded-lg">
+                          {item.icon}
+                        </span>
+                        <span className="text-base-content/80">{item.text}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* CTA Button */}
+                  <div className="pt-4">
+                    <button
+                      className={`btn ${buttonState.style} btn-lg w-full gap-2 transition-transform ${
+                        !buttonState.disabled ? "group-hover:scale-[1.02]" : ""
+                      }`}
+                      onClick={() => {
+                        if (!buttonState.disabled) {
+                          setLoading(true);
+                          handlePlanUpgrade(plan.name).finally(() =>
+                            setLoading(false)
+                          );
+                        }
+                      }}
+                      disabled={buttonState.disabled || loading}
+                    >
+                      {loading && !buttonState.disabled ? (
+                        <span className="loading loading-spinner"></span>
+                      ) : (
+                        <>
+                          {!buttonState.disabled && <span>🚀</span>}
+                          {buttonState.text}
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Trust section */}
