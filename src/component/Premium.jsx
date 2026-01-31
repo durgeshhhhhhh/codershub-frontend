@@ -2,50 +2,42 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constant";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import PremiumShimmer from "./ShimmerUi/PremiumShimmer";
 
 const plans = [
-  // {
-  //   name: "Standard",
-  //   tag: "Free",
-  //   description: "Get started and discover developers.",
-  //   highlights: [
-  //     "Send requests to other developers",
-  //     "No chat access",
-  //     "No premium tick",
-  //     "See up to 25 users/day",
-  //   ],
-  //   accent: "bg-base-100",
-  //   tickBadge: "badge-ghost",
-  //   buttonStyle: "btn-outline",
-  //   spotlight: false,
-  // },
   {
     name: "Silver",
     tag: "Popular",
+    price: "₹500",
+    period: "/month",
     description: "Unlock more reach and real conversations.",
     highlights: [
-      "4x users/day",
-      "Blue tick",
-      "Chat feature enabled",
-      "Priority discovery",
+      { text: "100 profiles/day", icon: "👥" },
+      { text: "Blue verified tick", icon: "✓" },
+      { text: "Chat feature enabled", icon: "💬" },
+      { text: "Priority in discovery", icon: "🔍" },
     ],
-    accent: "bg-base-100",
-    tickBadge: "badge-info",
+    gradient: "from-blue-500/10 via-blue-400/5 to-transparent",
+    borderGlow: "hover:shadow-blue-500/20",
+    tickColor: "text-blue-500",
     buttonStyle: "btn-primary",
     spotlight: true,
   },
   {
     name: "Gold",
     tag: "Best Value",
+    price: "₹1000",
+    period: "/month",
     description: "Maximum visibility and premium presence.",
     highlights: [
-      "8x users/day",
-      "Gold tick",
-      "Chat feature enabled",
-      "Top-tier discovery",
+      { text: "200 profiles/day", icon: "👥" },
+      { text: "Gold verified tick", icon: "✓" },
+      { text: "Chat feature enabled", icon: "💬" },
+      { text: "Top-tier discovery", icon: "🚀" },
     ],
-    accent: "bg-base-100",
-    tickBadge: "badge-warning",
+    gradient: "from-amber-500/10 via-yellow-400/5 to-transparent",
+    borderGlow: "hover:shadow-amber-500/20",
+    tickColor: "text-amber-500",
     buttonStyle: "btn-warning",
     spotlight: false,
   },
@@ -54,6 +46,7 @@ const plans = [
 const Premium = () => {
   const navigate = useNavigate();
   const [isUserPremium, setIsUserPremium] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(true);
 
   useEffect(() => {
     verifyPremiumUser();
@@ -65,21 +58,17 @@ const Premium = () => {
         withCredentials: true,
       });
 
-      console.log(res?.data);
-
       if (res.data.isPremium) {
         setIsUserPremium(true);
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsVerifying(false);
     }
   };
 
   const handlePlanUpgrade = async (planName) => {
-    // if (planName === "Standard") {
-    //   return navigate("/");
-    // }
-
     try {
       const res = await axios.post(
         BASE_URL + "/payment/create",
@@ -116,91 +105,163 @@ const Premium = () => {
       console.log(error);
     }
   };
+  const [loading, setLoading] = useState(false);
+
+  if (isVerifying) {
+    return <PremiumShimmer />;
+  }
+
   return isUserPremium ? (
-    <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-100 to-base-200 px-6 py-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="text-center space-y-3">
-          <div className="badge badge-outline badge-primary px-4 py-3 text-xs font-semibold tracking-wide">
-            CodersHub Premium
+    <div className="min-h-screen bg-gradient-to-br from-base-100 via-primary/5 to-secondary/10 px-6 py-16 flex items-center justify-center">
+      <div className="text-center space-y-6 max-w-lg">
+        <div className="relative inline-block">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center mx-auto shadow-lg shadow-primary/30 animate-pulse">
+            <span className="text-4xl">👑</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold">
-            You are already a premium user
+        </div>
+        <div className="space-y-2">
+          <span className="badge badge-primary badge-lg px-4 py-3 font-semibold">
+            Premium Member
+          </span>
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            You're All Set!
           </h1>
-          <p className="text-base-content/70">
-            Thank you for being a part of CodersHub.
+          <p className="text-base-content/70 text-lg">
+            Enjoy unlimited access to all premium features. Thank you for being
+            part of CodersHub!
           </p>
-          <button className="btn btn-primary" onClick={() => navigate("/")}>
-            Go to Home
+        </div>
+        <div className="flex gap-3 justify-center pt-4">
+          <button
+            className="btn btn-primary btn-lg gap-2"
+            onClick={() => navigate("/")}
+          >
+            <span>🏠</span> Go to Feed
+          </button>
+          <button
+            className="btn btn-outline btn-lg gap-2"
+            onClick={() => navigate("/connections")}
+          >
+            <span>🤝</span> My Connections
           </button>
         </div>
       </div>
     </div>
   ) : (
-    <div className="min-h-screen bg-gradient-to-b from-base-100 via-base-100 to-base-200 px-6 py-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="text-center space-y-3">
-          <div className="badge badge-outline badge-primary px-4 py-3 text-xs font-semibold tracking-wide">
+    <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-100 to-base-200 px-4 sm:px-6 py-12">
+      <div className="mx-auto max-w-5xl">
+        {/* Header */}
+        <div className="text-center space-y-4 mb-12">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold">
+            <span className="animate-pulse">✨</span>
             CodersHub Premium
+            <span className="animate-pulse">✨</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold">
-            Choose the plan that matches your growth
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+            Supercharge Your{" "}
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              Developer Network
+            </span>
           </h1>
-          <p className="text-base-content/70">
-            Connect faster, get noticed, and build meaningful collaborations.
+          <p className="text-base-content/60 text-lg max-w-2xl mx-auto">
+            Connect faster, get noticed, and build meaningful collaborations
+            with fellow developers.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+        {/* Plans Grid */}
+        <div className="grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`card ${
-                plan.accent
-              } shadow-xl border border-base-200 transition-transform duration-300 hover:-translate-y-1 ${
-                plan.spotlight ? "ring-2 ring-primary/60" : ""
-              }`}
+              className={`relative group card bg-gradient-to-br ${plan.gradient} bg-base-100 border border-base-200 shadow-xl ${plan.borderGlow} hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden`}
             >
-              <div className="card-body space-y-5">
-                <div className="flex items-center justify-between">
-                  <h2 className="card-title text-2xl font-bold">{plan.name}</h2>
-                  <div className="badge badge-outline">{plan.tag}</div>
+              {/* Spotlight badge */}
+              {plan.spotlight && (
+                <div className="absolute -top-1 -right-1">
+                  <div className="bg-primary text-primary-content text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg shadow-lg">
+                    RECOMMENDED
+                  </div>
                 </div>
+              )}
 
-                <p className="text-sm text-base-content/70">
-                  {plan.description}
-                </p>
-
-                <div className="flex items-center gap-2">
-                  <span className={`badge ${plan.tickBadge}`}>
-                    Premium Tick
-                  </span>
-                  {plan.name !== "Standard" && (
-                    <span className="text-xs text-base-content/60">
-                      Verified badge included
+              <div className="card-body p-6 sm:p-8 space-y-6">
+                {/* Plan header */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <h2 className="text-2xl sm:text-3xl font-bold">
+                      {plan.name}
+                    </h2>
+                    <span className={`text-2xl ${plan.tickColor}`}>✓</span>
+                  </div>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl sm:text-5xl font-bold">
+                      {plan.price}
                     </span>
-                  )}
+                    <span className="text-base-content/50 text-lg">
+                      {plan.period}
+                    </span>
+                  </div>
+                  <p className="text-base-content/60">{plan.description}</p>
                 </div>
 
-                <ul className="space-y-2 text-sm text-base-content/80">
+                {/* Divider */}
+                <div className="divider my-2"></div>
+
+                {/* Features */}
+                <ul className="space-y-4">
                   {plan.highlights.map((item) => (
-                    <li key={item} className="flex gap-2">
-                      <span className="text-primary font-semibold">✓</span>
-                      <span>{item}</span>
+                    <li key={item.text} className="flex items-center gap-3">
+                      <span className="text-xl w-8 h-8 flex items-center justify-center bg-base-200 rounded-lg">
+                        {item.icon}
+                      </span>
+                      <span className="text-base-content/80">{item.text}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="card-actions pt-2">
+                {/* CTA Button */}
+                <div className="pt-4">
                   <button
-                    className={`btn ${plan.buttonStyle} w-full`}
-                    onClick={() => handlePlanUpgrade(plan.name)}
+                    className={`btn ${plan.buttonStyle} btn-lg w-full gap-2 group-hover:scale-[1.02] transition-transform`}
+                    onClick={() => {
+                      setLoading(true);
+                      handlePlanUpgrade(plan.name).finally(() =>
+                        setLoading(false)
+                      );
+                    }}
+                    disabled={loading}
                   >
-                    Upgrade Now
+                    {loading ? (
+                      <span className="loading loading-spinner"></span>
+                    ) : (
+                      <>
+                        <span>🚀</span> Upgrade to {plan.name}
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Trust section */}
+        <div className="mt-16 text-center space-y-4">
+          <p className="text-base-content/50 text-sm">
+            Secure payments powered by Razorpay
+          </p>
+          <div className="flex items-center justify-center gap-6 text-base-content/30">
+            <span className="flex items-center gap-1 text-sm">
+              🔒 SSL Encrypted
+            </span>
+            <span className="flex items-center gap-1 text-sm">
+              💳 Safe Checkout
+            </span>
+            <span className="flex items-center gap-1 text-sm">
+              ↩️ Easy Refunds
+            </span>
+          </div>
         </div>
       </div>
     </div>

@@ -1,12 +1,14 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constant";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
+import ConnectionShimmer from "./ShimmerUi/ConnectionShimmer";
 
 const Connections = () => {
   const dispatch = useDispatch();
   const connections = useSelector((store) => store.connection);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchConnections = async () => {
     try {
@@ -16,12 +18,18 @@ const Connections = () => {
       dispatch(addConnections(res?.data?.data));
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchConnections();
   }, []);
+
+  if (isLoading) {
+    return <ConnectionShimmer />;
+  }
 
   if (connections === null || connections?.length === 0) {
     return (
@@ -46,7 +54,8 @@ const Connections = () => {
           No Connections Yet
         </h2>
         <p className="text-base-content/60 text-center max-w-md">
-          Start connecting with other developers to grow your network and collaborate on projects!
+          Start connecting with other developers to grow your network and
+          collaborate on projects!
         </p>
       </div>
     );
@@ -74,15 +83,24 @@ const Connections = () => {
         <div>
           <h1 className="text-2xl font-bold text-base-content">Connections</h1>
           <p className="text-base-content/60 text-sm">
-            {connections.length} developer{connections.length !== 1 ? "s" : ""} in your network
+            {connections.length} developer{connections.length !== 1 ? "s" : ""}{" "}
+            in your network
           </p>
         </div>
       </div>
 
       <div className="grid gap-4">
         {connections.map((connection, index) => {
-          const { _id, firstName, lastName, photoUrl, about, age, gender, skills } =
-            connection;
+          const {
+            _id,
+            firstName,
+            lastName,
+            photoUrl,
+            about,
+            age,
+            gender,
+            skills,
+          } = connection;
           return (
             <div
               key={_id || index}
@@ -106,7 +124,9 @@ const Connections = () => {
                     {firstName} {lastName}
                   </h2>
                   {age && (
-                    <span className="badge badge-ghost badge-sm">{age} yrs</span>
+                    <span className="badge badge-ghost badge-sm">
+                      {age} yrs
+                    </span>
                   )}
                   {gender && (
                     <span className="badge badge-outline badge-sm capitalize">

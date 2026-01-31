@@ -3,12 +3,14 @@ import { BASE_URL } from "../utils/constant";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequests, removeRequest } from "../utils/requestSlice";
+import RequestShimmer from "./ShimmerUi/RequestShimmer";
 
 const Requests = () => {
   const dispatch = useDispatch();
   const requests = useSelector((store) => store.request);
   const [animatingCard, setAnimatingCard] = useState(null);
   const [toast, setToast] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -50,12 +52,18 @@ const Requests = () => {
       dispatch(addRequests(res?.data?.data));
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchRequests();
   }, []);
+
+  if (isLoading) {
+    return <RequestShimmer />;
+  }
 
   if (requests === null || requests?.length === 0) {
     return (

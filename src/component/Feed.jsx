@@ -1,13 +1,15 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { addFeed } from "../utils/feedSlice";
 import UserCard from "./UserCard";
+import FeedShimmer from "./ShimmerUi/FeedShimmer";
 
 const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
 
   const getFeed = async () => {
     try {
@@ -17,42 +19,21 @@ const Feed = () => {
       dispatch(addFeed(res.data));
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (!feed) {
       getFeed();
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
-  if (feed === null) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 px-4">
-        <div className="relative">
-          <div className="w-20 h-20 rounded-full border-4 border-primary/30 border-t-primary animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-primary animate-pulse"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-        </div>
-        <p className="mt-6 text-lg text-base-content/70 animate-pulse">
-          Finding amazing developers for you...
-        </p>
-      </div>
-    );
+  if (isLoading) {
+    return <FeedShimmer />;
   }
 
   if (feed?.length === 0) {
@@ -76,7 +57,9 @@ const Feed = () => {
             </svg>
           </div>
           <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-lg rotate-12">
-            <span className="text-white font-mono font-bold text-sm">&lt;/&gt;</span>
+            <span className="text-white font-mono font-bold text-sm">
+              &lt;/&gt;
+            </span>
           </div>
         </div>
 
