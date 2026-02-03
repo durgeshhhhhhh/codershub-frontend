@@ -3,7 +3,6 @@ import { BASE_URL } from "../utils/constant";
 import { useEffect, useState } from "react";
 import PremiumShimmer from "./ShimmerUi/PremiumShimmer";
 
-// Plan hierarchy: higher index = higher tier
 const plans = [
   {
     name: "Silver",
@@ -125,21 +124,36 @@ const Premium = () => {
     const isHigherTier = plan.tier > currentTier;
 
     if (isCurrentPlan) {
-      return { text: "Current Plan", disabled: true, style: "btn-disabled bg-base-300" };
+      return {
+        text: "Current Plan",
+        disabled: true,
+        style: "btn-disabled bg-base-300",
+      };
     }
     if (isLowerTier) {
-      return { text: "Included in your plan", disabled: true, style: "btn-disabled btn-ghost" };
+      return {
+        text: "Included in your plan",
+        disabled: true,
+        style: "btn-disabled btn-ghost",
+      };
     }
     if (isHigherTier && membershipType) {
-      return { text: `Upgrade to ${plan.name}`, disabled: false, style: plan.buttonStyle };
+      return {
+        text: `Upgrade to ${plan.name}`,
+        disabled: false,
+        style: plan.buttonStyle,
+      };
     }
-    return { text: `Get ${plan.name}`, disabled: false, style: plan.buttonStyle };
+    return {
+      text: `Get ${plan.name}`,
+      disabled: false,
+      style: plan.buttonStyle,
+    };
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-100 to-base-200 px-4 sm:px-6 py-12">
       <div className="mx-auto max-w-5xl">
-        {/* Header */}
         <div className="text-center space-y-4 mb-12">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold">
             <span className="animate-pulse">✨</span>
@@ -170,7 +184,6 @@ const Premium = () => {
           </p>
         </div>
 
-        {/* Plans Grid */}
         <div className="grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
           {plans.map((plan) => {
             const isCurrentPlan = membershipType === plan.name;
@@ -179,23 +192,27 @@ const Premium = () => {
             return (
               <div
                 key={plan.name}
-                className={`relative group card bg-gradient-to-br ${plan.gradient} bg-base-100 border-2 shadow-xl ${plan.borderGlow} hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden ${
+                className={`relative group card bg-gradient-to-br ${
+                  plan.gradient
+                } bg-base-100 border-2 shadow-xl ${
+                  plan.borderGlow
+                } hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden ${
                   isCurrentPlan
                     ? "border-primary ring-2 ring-primary/30"
                     : "border-base-200"
                 }`}
               >
-                {/* Current plan badge */}
                 {isCurrentPlan && (
                   <div className="absolute -top-1 -right-1">
-                    <div className={`${plan.currentBadgeStyle} badge text-xs font-bold px-3 py-3 rounded-bl-lg rounded-tr-lg shadow-lg`}>
+                    <div
+                      className={`${plan.currentBadgeStyle} badge text-xs font-bold px-3 py-3 rounded-bl-lg rounded-tr-lg shadow-lg`}
+                    >
                       CURRENT PLAN
                     </div>
                   </div>
                 )}
 
                 <div className="card-body p-6 sm:p-8 space-y-6">
-                  {/* Plan header */}
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <h2 className="text-2xl sm:text-3xl font-bold">
@@ -219,25 +236,26 @@ const Premium = () => {
                     <p className="text-base-content/60">{plan.description}</p>
                   </div>
 
-                  {/* Divider */}
                   <div className="divider my-2"></div>
 
-                  {/* Features */}
                   <ul className="space-y-4">
                     {plan.highlights.map((item) => (
                       <li key={item.text} className="flex items-center gap-3">
                         <span className="text-xl w-8 h-8 flex items-center justify-center bg-base-200 rounded-lg">
                           {item.icon}
                         </span>
-                        <span className="text-base-content/80">{item.text}</span>
+                        <span className="text-base-content/80">
+                          {item.text}
+                        </span>
                       </li>
                     ))}
                   </ul>
 
-                  {/* CTA Button */}
                   <div className="pt-4">
                     <button
-                      className={`btn ${buttonState.style} btn-lg w-full gap-2 transition-transform ${
+                      className={`btn ${
+                        buttonState.style
+                      } btn-lg w-full gap-2 transition-transform ${
                         !buttonState.disabled ? "group-hover:scale-[1.02]" : ""
                       }`}
                       onClick={() => {
@@ -266,7 +284,6 @@ const Premium = () => {
           })}
         </div>
 
-        {/* Trust section */}
         <div className="mt-16 text-center space-y-4">
           <p className="text-base-content/50 text-sm">
             Secure payments powered by Razorpay
