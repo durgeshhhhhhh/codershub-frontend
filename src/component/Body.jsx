@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import axios from "axios";
@@ -11,6 +11,8 @@ const Body = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userData = useSelector((store) => store.user);
+  const location = useLocation();
+  const isChatRoute = location.pathname.startsWith("/chat/");
 
   const fetchUser = async () => {
     try {
@@ -34,13 +36,13 @@ const Body = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <NavBar />
+      {<NavBar />}
 
       <main className="flex-1 flex items-center justify-center bg-base-200">
         <Outlet />
       </main>
 
-      <Footer />
+      {!isChatRoute && <Footer />}
     </div>
   );
 };

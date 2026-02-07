@@ -7,7 +7,8 @@
 - Install Node Version v24.12.0
 - git clone projects
 
-- Frontend
+# Frontend
+
         - npm install --> to isntall dependencies
         - npm run build
         - sudo apt update
@@ -17,6 +18,3 @@
         - copy code from dist(build files) to /var/www/html/
         - sudo scp -r dist/* /var/www/html
         - Enable port :80 of your instance
-
-
- 

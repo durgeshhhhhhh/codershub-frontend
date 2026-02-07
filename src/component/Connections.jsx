@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionSlice";
 import ConnectionShimmer from "./ShimmerUi/ConnectionShimmer";
+import { Link } from "react-router";
 
 const Connections = () => {
   const dispatch = useDispatch();
@@ -137,7 +138,9 @@ const Connections = () => {
 
                 {about && (
                   <p className="text-base-content/70 text-sm line-clamp-2">
-                    {about}
+                    {about.length > 100
+                      ? about.substring(0, 100) + "..."
+                      : about}
                   </p>
                 )}
 
@@ -158,6 +161,13 @@ const Connections = () => {
                     )}
                   </div>
                 )}
+
+                <Link to={"/chat/" + _id}>
+                  {" "}
+                  <button className="btn btn-primary btn-sm w-full mt-4">
+                    Chat
+                  </button>
+                </Link>
               </div>
             </div>
           );
@@ -166,5 +176,4 @@ const Connections = () => {
     </div>
   );
 };
-
 export default Connections;
