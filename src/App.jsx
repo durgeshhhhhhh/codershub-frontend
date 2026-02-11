@@ -3,6 +3,7 @@ import Body from "./component/Body";
 import { Provider } from "react-redux";
 import appStore from "./utils/appStore";
 import { lazy, Suspense } from "react";
+import HomeShimmer from "./component/ShimmerUi/HomeShimmer";
 
 const Login = lazy(() => import("./component/Login"));
 const Profile = lazy(() => import("./component/Profile"));
@@ -17,7 +18,7 @@ function App() {
     <>
       <Provider store={appStore}>
         <BrowserRouter basename="/">
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<HomeShimmer />}>
             <Routes>
               <Route path="/" element={<Body />}>
                 <Route index element={<Feed />} />
