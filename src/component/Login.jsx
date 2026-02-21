@@ -357,7 +357,7 @@ const Login = () => {
               </label>
             </div>
 
-            <div className="flex items-center justify-between text-sm">
+            {/* <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -373,7 +373,7 @@ const Login = () => {
                   Forgot password?
                 </a>
               )}
-            </div>
+            </div> */}
 
             <button
               type="submit"
@@ -419,11 +419,11 @@ const Login = () => {
             </button>
           </form>
 
-          <div className="divider text-base-content/40 text-xs">
+          {/* <div className="divider text-base-content/40 text-xs">
             OR CONTINUE WITH
-          </div>
+          </div> */}
 
-          <div className="flex gap-3">
+          {/* <div className="flex gap-3">
             <button className="btn btn-outline flex-1 hover:btn-primary transition-all duration-200">
               <svg
                 className="w-5 h-5"
@@ -460,7 +460,7 @@ const Login = () => {
               </svg>
               GitHub
             </button>
-          </div>
+          </div> */}
 
           <p className="text-center text-sm text-base-content/60 mt-2">
             {isLoginForm
